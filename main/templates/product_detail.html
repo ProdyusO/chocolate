@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="p-3 mb-2 bg-dark text-white text-center mt-5 ">{{product.title}}</h1>
+</div>
+<nav aria-label="breadcrumb" class="px-3 mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'base' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a href="#">{{ product.category.name}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 text-center mt-5 pt-5">
+            <img src="{{product.image.url}}" class="image">
+        </div>
+        <div class="col-md-6 text-center mt-5 pt-5">
+            <img src="{{product.image.url}}" class="image">
+        </div>
+    </div>
+    <div class="text-center">
+            <h4 class="mt-5">{{product.material}}</h4>
+            <h4 class="mt-5 ">{{product.descriptions}}</h4>
+            <h4 class="mt-5 ">Опис</h4>
+            <h3 class="mt-5">{{product.price}} UAH</h3>
+            <h3 class="mt-5">{{product.size}}</h3>
+            <a href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug %}"><button class="btn btn-danger">Додати до кошику</button></a>
+        </div>
+</div>
+
+{% endblock content %}
