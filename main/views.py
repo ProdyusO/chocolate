@@ -26,7 +26,7 @@ class BaseView(CartMixin, CategoryDetailMixin, View):
 class ProductDetailView(CartMixin, CategoryDetailMixin, DetailView):
 
     CT_MODEL_MODEL_CLASS = {
-        't-shirt': TShirt,
+        'tshirt': TShirt,
         'bag': Bag
     }
 
