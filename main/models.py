@@ -148,12 +148,27 @@ class TShirt(Product):
     material = models.CharField(max_length=255, verbose_name='Матеріал')
     color = models.CharField(max_length=255, verbose_name='Колір')
     size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+    back_image = models.ImageField(verbose_name='Заднє фото', blank=True, null=True)
 
     def __str__(self):
         return '{} : {}'.format(self.category.name, self.title)
 
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
+
+    def save(self, *args, **kwargs):
+        image = self.back_image
+        img = Image.open(image)
+        new_img = img.convert('RGB')
+        resized_new_img = new_img.resize((500, 500), Image.ANTIALIAS)
+        filestream = BytesIO()
+        resized_new_img.save(filestream, 'JPEG', quality=90)
+        filestream.seek(0)
+        name = '{}.{}'.format(*self.back_image.name.split('.'))
+        self.back_image = InMemoryUploadedFile(
+            filestream, 'ImageField', name, 'jpeg/image', sys.getsizeof(filestream), None
+        )
+        super().save(*args, **kwargs)
 
 
 class Bag(Product):

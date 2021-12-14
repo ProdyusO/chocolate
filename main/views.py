@@ -60,6 +60,7 @@ class CategoryDetailView(CartMixin, CategoryDetailMixin, DetailView):
         context['cart'] = self.cart
         return context
 
+
 class AddToCartView(CartMixin, CategoryDetailMixin, View):
 
     def get(self, request, *args, **kwargs):
