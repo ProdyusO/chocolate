@@ -104,6 +104,10 @@ class ChangeQTYView(CartMixin, CategoryDetailMixin, View):
         )
         qty = int(request.POST.get('qty'))
         cart_product.quantity = qty
+        size = str(request.POST.get('size'))
+        cart_product.size = size
+        volume = str(request.POST.get('volume'))
+        cart_product.volume = volume
         cart_product.save()
         recalc_cart(self.cart)
         messages.add_message(request, messages.INFO, 'Товар успішно змінено')

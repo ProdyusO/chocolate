@@ -17,13 +17,14 @@
       <th scope="col">Назва</th>
       <th scope="col">Зображення</th>
       <th scope="col">Ціна</th>
-      <th scope="col">Кількість</th>
+      <th scope="col">Кількість/Розмір</th>
       <th scope="col">Загальна вартість</th>
       <th scope="col">Дія</th>
     </tr>
   </thead>
   <tbody>
   {% for item in cart.products.all %}
+  {% if item.content_object.category.slug == 'tshirts' %}
     <tr>
       <th scope="row">{{ item.content_object.title }}</th>
       <td class="w-25"><img src="{{ item.content_object.image.url }}" class="img-fluid"></td>
@@ -34,12 +35,41 @@
           {% csrf_token %}
           <input type="number" class="form-control" name="qty" style="width: 70px" min="1" value="{{ item.quantity }}">
           <br>
+          <p><input type="radio" name="size" value="S"> S </p>
+          <p><input type="radio" name="size" value="M"> M </p>
+          <p><input type="radio" name="size" value="XL"> XL </p>
+          <p><input type="radio" name="size" value="XXL"> XXL </p>
+          <br>
           <input type="submit" class="btn btn-primary" value="Змінити кількість">
         </form>
       </td>
       <td>{{ item.final_price }} UAH</td>
       <td><a href="{% url 'delete_from_cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}"><button class="btn btn-danger">Видалити з кошику</button></a></td>
     </tr>
+  {% endif %}
+  {% if item.content_object.category.slug == 'bags' %}
+  <tr>
+      <th scope="row">{{ item.content_object.title }}</th>
+      <td class="w-25"><img src="{{ item.content_object.image.url }}" class="img-fluid"></td>
+      <td>{{ item.content_object.price }} UAH</td>
+      <td>
+        <form action="{% url 'change_qty' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}"
+              method="POST">
+          {% csrf_token %}
+          <input type="number" class="form-control" name="qty" style="width: 70px" min="1" value="{{ item.quantity }}">
+          <br>
+          <p><input type="radio" name="volume" value="1 L"> 1L </p>
+          <p><input type="radio" name="volume" value="2 L"> 2L </p>
+          <p><input type="radio" name="volume" value="3 L"> 3L </p>
+          <p><input type="radio" name="volume" value="4 L"> 4L </p>
+          <br>
+          <input type="submit" class="btn btn-primary" value="Змінити кількість">
+        </form>
+      </td>
+      <td>{{ item.final_price }} UAH</td>
+      <td><a href="{% url 'delete_from_cart' ct_model=item.content_object.get_model_name slug=item.content_object.slug %}"><button class="btn btn-danger">Видалити з кошику</button></a></td>
+    </tr>
+  {% endif %}
   {% endfor %}
     <tr>
       <td colspan="2"></td>
@@ -50,7 +80,6 @@
     </tr>
   </tbody>
 </table>
-
 {% endif %}
 {% endblock content %}
 

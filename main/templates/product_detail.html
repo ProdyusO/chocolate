@@ -9,7 +9,7 @@
 <nav aria-label="breadcrumb" class="px-3 mt-3">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'base' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="#">{{ product.category.name}}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'category_detail' slug=product.category.slug %}">{{ product.category.name}}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
     </ol>
 </nav>
@@ -27,9 +27,13 @@
             <h4 class="mt-5 ">{{product.descriptions}}</h4>
             <h4 class="mt-5 ">Опис</h4>
             <h3 class="mt-5">{{product.price}} UAH</h3>
-            <h3 class="mt-5">{{product.size}}</h3>
+            {% if product.category.name == 'Футболки' %}
+            <h3 class="mt-5">Розміри: {{product.size}}</h3>
+            {% else %}
+            <h3 class="mt-5">Об'єм л.: {{product.volume}}</h3>
+            {% endif %}
             <a href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug %}"><button class="btn btn-danger">Додати до кошику</button></a>
-        </div>
+    </div>
 </div>
 
 {% endblock content %}

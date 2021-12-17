@@ -175,6 +175,7 @@ class Bag(Product):
 
     material = models.CharField(max_length=255, verbose_name='Матеріал')
     color = models.CharField(max_length=255, verbose_name='Колір')
+    volume = models.CharField(max_length=255, verbose_name="Об'єм, л.", blank=True, null=True)
 
     def __str__(self):
         return '{} : {}'.format(self.category.name, self.title)
@@ -185,6 +186,7 @@ class Bag(Product):
 
 class CartProduct(models.Model):
 
+
     user = models.ForeignKey('Customer', verbose_name='Покупець', on_delete=models.CASCADE)
     cart = models.ForeignKey('Cart', verbose_name='Кошик', on_delete=models.CASCADE, related_name='related_products')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -192,6 +194,8 @@ class CartProduct(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     quantity = models.PositiveIntegerField(default=1)
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Вартість')
+    size = models.CharField(max_length=10, verbose_name='Розмір', blank=True, null=True)
+    volume = models.CharField(max_length=10, verbose_name="Об'єм", blank=True, null=True)
 
     def __str__(self):
         return 'Продукт: {} (Для кошику)'.format(self.content_object.title)
