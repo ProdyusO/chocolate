@@ -1,0 +1,25 @@
+body {
+    background-color: #000;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+}
+
+.navbar {
+    background-color: #000;
+    font-family: Impact;
+}
+
+.item3link-danger {
+    font-family: Marker Felt, fantasy;
+    text-decoration: none;
+    color: #B98308;
+}
+
+.item4link-danger {
+    font-family: Marker Felt, fantasy;
+    text-decoration: none;
+    color: #B98308;
+}
+
+.item23 {
+    color: #B98308;
+}

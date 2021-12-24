@@ -1,28 +1,27 @@
 {% extends 'base.html' %}
-
-
-
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"  />
 {% block content %}
-<div class="container-fluid">
-    <h1 class="p-3 mb-2 bg-dark text-white text-center mt-5 ">{{product.title}}</h1>
+<div class="container-fluid mt-5 pt-3">
+    <h1 class="item23 p-3 mb-2 bg-black text-center mt-5 ">{{product.title}}</h1>
 </div>
-<nav aria-label="breadcrumb" class="px-3 mt-3">
+<nav aria-label="breadcrumb" class="px-5 mt-3">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'base' %}">Головна</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'category_detail' slug=product.category.slug %}">{{ product.category.name}}</a></li>
+        <li class="breadcrumb-item"><a class="link-warning" href="{% url 'base' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a class="link-warning" href="{% url 'category_detail' slug=product.category.slug %}">{{ product.category.name}}</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
     </ol>
 </nav>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-6 text-center mt-5 pt-5">
+        <div class="col-md-6 text-center mt-5">
             <img src="{{product.image.url}}" class="image">
         </div>
-        <div class="col-md-6 text-center mt-5 pt-5">
+        <div class="col-md-6 text-center mt-5">
             <img src="{{product.back_image.url}}" class="image">
         </div>
     </div>
-    <div class="text-center">
+    <div class="text-center text-white">
             <h4 class="mt-5">{{product.material}}</h4>
             <h4 class="mt-5 ">{{product.descriptions}}</h4>
             <h4 class="mt-5 ">Опис</h4>
@@ -32,7 +31,7 @@
             {% else %}
             <h3 class="mt-5">Об'єм л.: {{product.volume}}</h3>
             {% endif %}
-            <a href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug %}"><button class="btn btn-danger">Додати до кошику</button></a>
+            <a href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug %}"><button class="btn btn-info">До кошику</button></a>
     </div>
 </div>
 
