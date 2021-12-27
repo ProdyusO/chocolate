@@ -61,14 +61,22 @@ class CategoryManager(models.Manager):
 
     CATEGORY_NAME_COUNT_NAME ={
         'Футболки': 'tshirt__count',
-        'Бананки': 'bag__count',
+        'Сумки': 'bag__count',
+        'Худі': 'hood__count',
+        'Шопери': 'shoper__count',
+        'Шкарпетки': 'sock__count',
+        'Світшоти': 'sweetshot__count',
+        'Штани/Джинси': 'pant__count',
+        'Шарфи': 'scarf__count',
+        'Куртки': 'jacket__count',
+        'Патчі': 'patch__count',
     }
 
     def get_queryset(self):
         return super().get_queryset()
 
     def get_categories_for_left_sidebar(self):
-        models = get_models_for_count('tshirt', 'bag')
+        models = get_models_for_count('tshirt', 'bag', 'hood', 'shoper', 'sock', 'sweetshot', 'pant', 'scarf', 'jacket', 'patch')
         qs = list(self.get_queryset().annotate(*models))
         data = [
             dict(name=c.name, url=c.get_absolute_url(), count=getattr(c, self.CATEGORY_NAME_COUNT_NAME[c.name]))
@@ -103,9 +111,12 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name='Категорія', on_delete=models.CASCADE)
     title = models.CharField(max_length=255, verbose_name='Найменування')
     slug = models.SlugField(unique=True)
-    image = models.ImageField(verbose_name='Зображення')
-    descriptions = models.TextField(verbose_name='Опис товару', null=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name='Ціна')
+    main_image = models.ImageField(verbose_name='Головне зображення')
+    second_image = models.ImageField(verbose_name='Друге зображення')
+    third_image = models.ImageField(verbose_name='Третьє зображення', blank=True, null=True)
+    fourth_image = models.ImageField(verbose_name='Четверте зображення', blank=True, null=True)
+    descriptions = models.TextField(verbose_name='Опис товару', blank=True, null=True)
+    price = models.DecimalField(max_digits=9, decimal_places=1, verbose_name='Ціна')
 
     def __str__(self):
         return self.title
@@ -127,28 +138,59 @@ class Product(models.Model):
     #     super().save(*args, **kwargs)
 
 
-    # code for auto-cuting images resolution to 500 x 500
+    # code for auto-cuting images resolution to 400 x 600
     def save(self, *args, **kwargs):
-        image = self.image
-        img = Image.open(image)
-        new_img = img.convert('RGB')
-        resized_new_img = new_img.resize((500, 500), Image.ANTIALIAS)
-        filestream = BytesIO()
-        resized_new_img.save(filestream, 'JPEG', quality=90)
-        filestream.seek(0)
-        name = '{}.{}'.format(*self.image.name.split('.'))
-        self.image = InMemoryUploadedFile(
-            filestream, 'ImageField', name, 'jpeg/image', sys.getsizeof(filestream), None
+        main_image, second_image, third_image, fourth_image = self.main_image, \
+                                                              self.second_image, \
+                                                              self.third_image, \
+                                                              self.fourth_image
+        img1 = Image.open(main_image)
+        img2 = Image.open(second_image)
+        img3 = Image.open(third_image)
+        img4 = Image.open(fourth_image)
+        new_img1 = img1.convert('RGB')
+        new_img2 = img2.convert('RGB')
+        new_img3 = img3.convert('RGB')
+        new_img4 = img4.convert('RGB')
+        resized_new_img1 = new_img1.resize((400, 600), Image.ANTIALIAS)
+        resized_new_img2 = new_img2.resize((400, 600), Image.ANTIALIAS)
+        resized_new_img3 = new_img3.resize((400, 600), Image.ANTIALIAS)
+        resized_new_img4 = new_img4.resize((400, 600), Image.ANTIALIAS)
+        filestream1 = BytesIO()
+        filestream2 = BytesIO()
+        filestream3 = BytesIO()
+        filestream4 = BytesIO()
+        resized_new_img1.save(filestream1, 'JPEG', quality=90)
+        resized_new_img2.save(filestream2, 'JPEG', quality=90)
+        resized_new_img3.save(filestream3, 'JPEG', quality=90)
+        resized_new_img4.save(filestream4, 'JPEG', quality=90)
+        filestream1.seek(0)
+        filestream2.seek(0)
+        filestream3.seek(0)
+        filestream4.seek(0)
+        name1 = '{}.{}'.format(*self.main_image.name.split('.'))
+        name2 = '{}.{}'.format(*self.second_image.name.split('.'))
+        name3 = '{}.{}'.format(*self.third_image.name.split('.'))
+        name4 = '{}.{}'.format(*self.fourth_image.name.split('.'))
+        self.main_image = InMemoryUploadedFile(
+            filestream1, 'ImageField', name1, 'jpeg/image', sys.getsizeof(filestream1), None
+        )
+        self.second_image = InMemoryUploadedFile(
+            filestream2, 'ImageField', name2, 'jpeg/image', sys.getsizeof(filestream2), None
+        )
+        self.third_image = InMemoryUploadedFile(
+            filestream3, 'ImageField', name3, 'jpeg/image', sys.getsizeof(filestream3), None
+        )
+        self.fourth_image = InMemoryUploadedFile(
+            filestream4, 'ImageField', name4, 'jpeg/image', sys.getsizeof(filestream4), None
         )
         super().save(*args, **kwargs)
 
 
 class TShirt(Product):
 
-    material = models.CharField(max_length=255, verbose_name='Матеріал')
-    color = models.CharField(max_length=255, verbose_name='Колір')
     size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
-    back_image = models.ImageField(verbose_name='Заднє фото', blank=True, null=True)
+
 
     def __str__(self):
         return '{} : {}'.format(self.category.name, self.title)
@@ -156,25 +198,9 @@ class TShirt(Product):
     def get_absolute_url(self):
         return get_product_url(self, 'product_detail')
 
-    def save(self, *args, **kwargs):
-        image = self.back_image
-        img = Image.open(image)
-        new_img = img.convert('RGB')
-        resized_new_img = new_img.resize((500, 500), Image.ANTIALIAS)
-        filestream = BytesIO()
-        resized_new_img.save(filestream, 'JPEG', quality=90)
-        filestream.seek(0)
-        name = '{}.{}'.format(*self.back_image.name.split('.'))
-        self.back_image = InMemoryUploadedFile(
-            filestream, 'ImageField', name, 'jpeg/image', sys.getsizeof(filestream), None
-        )
-        super().save(*args, **kwargs)
-
 
 class Bag(Product):
 
-    material = models.CharField(max_length=255, verbose_name='Матеріал')
-    color = models.CharField(max_length=255, verbose_name='Колір')
     volume = models.CharField(max_length=255, verbose_name="Об'єм, л.", blank=True, null=True)
 
     def __str__(self):
@@ -184,8 +210,95 @@ class Bag(Product):
         return get_product_url(self, 'product_detail')
 
 
-class CartProduct(models.Model):
+class Hood(Product):
 
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Shoper(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Sock(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Sweetshot(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Pant(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Scarf(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Jacket(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class Patch(Product):
+
+    size = models.CharField(max_length=255, null=True, blank=True, verbose_name='Розмір')
+
+    def __str__(self):
+        return '{} : {}'.format(self.category.name, self.title)
+
+    def get_absolute_url(self):
+        return get_product_url(self, 'product_detail')
+
+
+class CartProduct(models.Model):
 
     user = models.ForeignKey('Customer', verbose_name='Покупець', on_delete=models.CASCADE)
     cart = models.ForeignKey('Cart', verbose_name='Кошик', on_delete=models.CASCADE, related_name='related_products')
@@ -247,7 +360,7 @@ class Order(models.Model):
     }
 
     BUYING_TYPE_CHOICES = {
-        (BUYING_TYPE_SELF, 'Самовивіз'),
+        (BUYING_TYPE_SELF, 'Самовивіз, м. Одеса Преображенська 34'),
         (BUYING_TYPE_DELIVERY, 'Доставка'),
 
     }
@@ -256,6 +369,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=255, verbose_name="Ім'я")
     last_name = models.CharField(max_length=255, verbose_name='Прізвище')
     phone = models.CharField(max_length=200, verbose_name='Телефон')
+    mail = models.EmailField(max_length=30, verbose_name='E-mail', blank=True, null=True)
     cart = models.ForeignKey(Cart, verbose_name='Кошик', on_delete=models.CASCADE, null=True, blank=True)
     address = models.CharField(max_length=1024, verbose_name='Адреса', null=True, blank=True)
     status = models.CharField(
@@ -272,7 +386,7 @@ class Order(models.Model):
     )
     comment = models.TextField(verbose_name='Коментар до замовлення', null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True, verbose_name='Дата створення замовлення')
-    order_date = models.DateField(verbose_name='Дата отримання замовлення', default=timezone.now)
+
 
     def __str__(self):
         return str(self.id)

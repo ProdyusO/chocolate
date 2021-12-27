@@ -1,15 +1,8 @@
 {% extends 'base.html' %}
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"  />
 {% block content %}
-<header >
-            <div class="container text-center text-danger px-4 px-lg-5 mt-5 pt-5">
-                <h1>{{category.name}}</h1>
-            </div>
-        </header>
-<nav aria-label="breadcrumb" class="px-5">
+<nav aria-label="breadcrumb" class="item13">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a class="link-warning" href="{% url 'base' %}">Головна</a></li>
+        <li class="breadcrumb-item"><a class="link-light" href="{% url 'base' %}">Головна</a></li>
         <li class="breadcrumb-item active">{{ category.name }}</li>
     </ol>
 </nav>
@@ -17,14 +10,14 @@
     {% for product in category_products %}
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card text-center text-white bg-black h-100">
-                <a href ="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt="..." /></a>
+                <a href ="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.main_image.url }}" alt="..." /></a>
                 <div class="card-body">
                     <h4 class="card-title">
                         <a class="item4link-danger" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
                     </h4>
                     <h5 class="mt-5">{{ product.price }} UAH</h5>
                     <a href="{% url 'add_to_cart' ct_model=product.get_model_name slug=product.slug%}">
-                        <button class="btn btn-info text-black">До кошику</button>
+                        <button class="btn btn-light text-black">До кошику</button>
                     </a>
                 </div>
             </div>

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import DetailView, View
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
-from .models import Bag, Category, TShirt, LatestProducts, Customer, Cart, CartProduct
+from .models import *
 from .mixins import CategoryDetailMixin, CartMixin
 from django.contrib import messages
 from .forms import OrderForm
@@ -14,7 +14,19 @@ class BaseView(CartMixin, CategoryDetailMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.get_categories_for_left_sidebar()
-        products = LatestProducts.objects.get_products_for_main_page('tshirt', 'bag', with_respect_to='tshirt')
+        products = LatestProducts.objects.get_products_for_main_page(
+            'tshirt',
+            'bag',
+            'hood',
+            'shoper',
+            'sock',
+            'sweetshot',
+            'pant',
+            'scarf',
+            'jacket',
+            'patch',
+            with_respect_to='tshirt'
+        )
         context = {
             'categories': categories,
             'products': products,
@@ -27,7 +39,15 @@ class ProductDetailView(CartMixin, CategoryDetailMixin, DetailView):
 
     CT_MODEL_MODEL_CLASS = {
         'tshirt': TShirt,
-        'bag': Bag
+        'bag': Bag,
+        'hood': Hood,
+        'shoper': Shoper,
+        'sock': Sock,
+        'sweetshot': Sweetshot,
+        'pant': Pant,
+        'scarf': Scarf,
+        'jacket': Jacket,
+        'patch': Patch,
     }
 
     def dispatch(self, request, *args, **kwargs):
@@ -152,7 +172,6 @@ class MakeOrderView(CartMixin, CategoryDetailMixin, View):
             new_order.phone = form.cleaned_data['phone']
             new_order.address = form.cleaned_data['address']
             new_order.buying_type = form.cleaned_data['buying_type']
-            new_order.order_date = form.cleaned_data['order_date']
             new_order.comment = form.cleaned_data['comment']
             new_order.save()
             self.cart.in_order=True

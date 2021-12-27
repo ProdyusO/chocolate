@@ -1,6 +1,6 @@
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic import View
-from .models import Category, Cart, Customer, TShirt, Bag
+from .models import *
 
 
 class CategoryDetailMixin(SingleObjectMixin):
@@ -8,7 +8,16 @@ class CategoryDetailMixin(SingleObjectMixin):
     CATEGOTY_SLUG2PRODUCT_MODEL = {
         'tshirts': TShirt,
         'bags': Bag,
+        'hoods': Hood,
+        'shopers': Shoper,
+        'socks': Sock,
+        'sweetshots': Sweetshot,
+        'pants': Pant,
+        'scarfs': Scarf,
+        'jackets': Jacket,
+        'patchs': Patch,
     }
+
     def get_context_data(self, **kwargs):
         if isinstance(self.get_object(), Category):
             model = self.CATEGOTY_SLUG2PRODUCT_MODEL[self.get_object().slug]

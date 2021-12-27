@@ -11,15 +11,32 @@ body {
 .item3link-danger {
     font-family: Marker Felt, fantasy;
     text-decoration: none;
-    color: #B98308;
+    color: #fff;
 }
 
 .item4link-danger {
     font-family: Marker Felt, fantasy;
     text-decoration: none;
-    color: #B98308;
+    color: #fff;
 }
 
 .item23 {
-    color: #B98308;
+    color: #fff;
+}
+
+.item_carousel {
+    height: 500px;
+    width: 400px;
+    margin: 0 auto;
+
+}
+
+.item_car2 {
+    color: #fff;
+    text-align: justify;
+
+}
+
+.item13 {
+    padding: 100px;
 }
